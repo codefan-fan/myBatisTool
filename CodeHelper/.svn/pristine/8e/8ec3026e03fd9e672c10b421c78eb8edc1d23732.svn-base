@@ -1,0 +1,185 @@
+package com.mybatis.util;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.mybatis.generator.api.MyBatisGenerator;
+import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.config.xml.ConfigurationParser;
+import org.mybatis.generator.exception.InvalidConfigurationException;
+import org.mybatis.generator.exception.XMLParserException;
+import org.mybatis.generator.internal.DefaultShellCallback;
+
+
+
+public class CodeHelper {
+	
+	
+	private static MyBatisXmlBean mybatisBean=new MyBatisXmlBean();
+	
+	static{
+		Properties pro=new Properties();
+		InputStream in=CodeHelper.class.getClassLoader().getResourceAsStream("tools.properties");
+		try {
+			pro.load(in);
+			mybatisBean.setMysqlJar(pro.getProperty("mysqljar"));
+			mybatisBean.setMysqlJdbc(pro.getProperty("mysql-jdbc"));
+			mybatisBean.setUserName(pro.getProperty("username"));
+			mybatisBean.setPassWord(pro.getProperty("password"));
+			mybatisBean.setBeanTargetProject(pro.getProperty("beanTargetProject"));
+			mybatisBean.setXmlbeanTargetProject(pro.getProperty("xmlbeanTargetProject"));
+			mybatisBean.setDaoTargetProject(pro.getProperty("daoTargetProject"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+		
+	}
+	
+	
+	public static void main(String[] args) {
+		try {
+			CodeHelper.codeCreate();
+			System.out.print("代码生成完毕");
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		} catch (XMLParserException e) {
+
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+
+			e.printStackTrace();
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+
+			e.printStackTrace();
+		}
+	}
+	
+	public static void codeCreate() throws IOException, XMLParserException, InvalidConfigurationException, SQLException, InterruptedException {	
+		 List<String> warnings = new ArrayList<String>();
+		 boolean overwrite=true;
+		 String path=CodeHelper.class.getClassLoader().getResource("generatorConfig.xml").getPath();
+		 File configFile=new File(path);
+		 
+		 Document doc=CodeHelper.getDocumentFromXml(configFile);
+		 
+		 Element e=doc.getRootElement();
+		 
+		 Element mysqlDriver=e.element("classPathEntry");
+		 
+		 //设置mysql 驱动jar包
+		 mysqlDriver.setAttributeValue("location", mybatisBean.getMysqlJar());
+		 
+		 Element context=e.element("context");
+		 
+		 //设置jdbc连接驱动
+		 Element jdbcConnection=context.element("jdbcConnection");
+		 
+		 jdbcConnection.setAttributeValue("connectionURL",mybatisBean.getMysqlJdbc());
+		 
+		 //设置mysql用户
+		 jdbcConnection.setAttributeValue("userId",mybatisBean.getUserName());
+		 
+		//设置mysql密码
+		 jdbcConnection.setAttributeValue("password",mybatisBean.getPassWord());
+		 
+		 //设置生成VO的位置
+		 Element javaModelGenerator=context.element("javaModelGenerator");
+		 
+		 javaModelGenerator.setAttributeValue("targetProject",mybatisBean.getBeanTargetProject());
+		 
+		 //设置成mapper-xml位置
+		 Element sqlMapGenerator=context.element("sqlMapGenerator");
+		 
+		 sqlMapGenerator.setAttributeValue("targetProject",mybatisBean.getXmlbeanTargetProject());
+		 
+		 //设置生成DAO的位置
+		 Element javaClientGenerator=context.element("javaClientGenerator");
+		 javaClientGenerator.setAttributeValue("targetProject",mybatisBean.getDaoTargetProject());		 
+		 
+		 Element table=context.element("table");
+		 
+		 BufferedReader reader = null;
+		 
+		 try{
+			 
+			 reader = new BufferedReader( new InputStreamReader(CodeHelper.class.getClassLoader().getResourceAsStream("code.txt")));
+			 
+			 String[] params=reader.readLine().split(";");
+			 
+			 while (params!=null){
+				 javaModelGenerator.setAttributeValue("targetPackage",params[0]);
+				 sqlMapGenerator.setAttributeValue("targetPackage",params[1]);
+				 javaClientGenerator.setAttributeValue("targetPackage",params[2]);
+				 table.setAttributeValue("tableName",params[3]);
+				 table.setAttributeValue("domainObjectName",params[4]);
+				 
+				 
+				 Document newDoc=(Document) doc.clone();
+				 
+				 InputStream output=new ByteArrayInputStream(newDoc.asXML().getBytes("utf-8")); 
+			 
+				 ConfigurationParser cp=new ConfigurationParser(warnings);
+				 
+				 Configuration config=cp.parseConfiguration(output);
+				 DefaultShellCallback callback = new DefaultShellCallback(overwrite);
+				 MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
+				 myBatisGenerator.generate(null);
+				 
+				 String read=reader.readLine();
+				 
+				 if (read!=null){					 
+					 params=read.split(";");
+				 }
+				 else{
+					 params=null;
+				 }
+				 output.close();
+				 
+			 }
+		 }
+        finally {
+            try {
+                reader.close();
+            }
+            catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+		 
+		 
+	}
+	
+	private static Document getDocumentFromXml(File file){
+		Document doc =null;
+		
+		SAXReader reader = new SAXReader();
+		
+		try {
+			doc=reader.read(file);
+		} catch (DocumentException e) {
+
+			e.printStackTrace();
+		}
+		
+		return doc;
+	}
+
+
+}

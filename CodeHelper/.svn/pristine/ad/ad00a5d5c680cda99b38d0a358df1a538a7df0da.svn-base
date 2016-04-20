@@ -1,0 +1,21 @@
+# mysql 驱动jar文件地址
+mysqljar=F:/Develop Tools/New Tools/maven/local/mysql/mysql-connector-java/5.1.35/mysql-connector-java-5.1.35-sources.jar
+
+# 数据库地址
+mysql-jdbc=jdbc:mysql://218.17.206.98:7202/carloan
+
+# 数据库帐号
+username=root
+
+# 数据库密码
+
+password=123456
+
+# 生成VO的位置
+beanTargetProject=F:\\MyProject\\lhhspeed\\src\\main\\java
+
+# 生成mapper-xml位置
+xmlbeanTargetProject=F:\\MyProject\\lhhspeed\\src\\main\\resources
+
+# 生成dao位置
+daoTargetProject=F:\\MyProject\\lhhspeed\\src\\main\\java

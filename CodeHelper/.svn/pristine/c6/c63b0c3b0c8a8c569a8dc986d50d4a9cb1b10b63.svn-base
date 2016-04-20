@@ -1,0 +1,2 @@
+com.touna.business.car.bean;com.touna.business.car.sqlmap;com.touna.business.car.mapper;tb_car_brand;CarBrand
+com.touna.business.car.bean;com.touna.business.car.sqlmap;com.touna.business.car.mapper;tb_car_carinfo;CarInfo
