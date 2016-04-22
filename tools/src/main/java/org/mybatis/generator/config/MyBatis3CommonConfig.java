@@ -21,6 +21,9 @@ public class MyBatis3CommonConfig {
 	
 	/** 生成dao位置 **/
 	private String daoTargetProject;
+	
+	/** 生成service位置 **/
+	private String serviceTargetProject;
 
 	public String getMysqlJar() {
 		return mysqlJar;
@@ -79,5 +82,14 @@ public class MyBatis3CommonConfig {
 	public void setDaoTargetProject(String daoTargetProject) {
 		this.daoTargetProject = daoTargetProject;
 	}
+
+	public String getServiceTargetProject() {
+		return serviceTargetProject;
+	}
+
+	public void setServiceTargetProject(String serviceTargetProject) {
+		this.serviceTargetProject = serviceTargetProject;
+	}
+	
 	
 }

@@ -2,9 +2,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.mybatis.tools</groupId>
+  <groupId>com.touna.tools</groupId>
   <artifactId>codehelper</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <packaging>jar</packaging>
 
   <name>tools</name>
@@ -15,6 +15,11 @@
   </properties>
 
   <dependencies>
+	<dependency>
+		<groupId>org.apache.velocity</groupId>
+		<artifactId>velocity</artifactId>
+		<version>1.7</version>
+	</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

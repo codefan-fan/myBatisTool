@@ -44,6 +44,10 @@ public interface Rules {
      * @return true if the element and method should be generated
      */
     boolean generateInsertSelective();
+    
+    boolean generateTounaInsert();
+    
+    boolean generateTounaDelete();
 
     /**
      * Calculates the class that contains all fields. This class is used as the
@@ -84,6 +88,9 @@ public interface Rules {
      * @return true if the element and method should be generated
      */
     boolean generateUpdateByPrimaryKeySelective();
+    
+    
+    boolean generateUpdate();
 
     /**
      * Implements the rule for generating the delete by primary key SQL Map

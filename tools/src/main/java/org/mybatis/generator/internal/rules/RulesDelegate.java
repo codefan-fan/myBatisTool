@@ -88,6 +88,10 @@ public class RulesDelegate implements Rules {
     public boolean generateDeleteByPrimaryKey() {
         return rules.generateDeleteByPrimaryKey();
     }
+    
+    public boolean generateTounaDelete(){
+    	return rules.generateTounaDelete();
+    }
 
     public boolean generateExampleClass() {
         return rules.generateExampleClass();
@@ -148,6 +152,10 @@ public class RulesDelegate implements Rules {
     public boolean generateUpdateByPrimaryKeySelective() {
         return rules.generateUpdateByPrimaryKeySelective();
     }
+    
+    public boolean generateUpdate(){
+    	return rules.generateUpdate();
+    }
 
     public boolean generateUpdateByPrimaryKeyWithBLOBs() {
         return rules.generateUpdateByPrimaryKeyWithBLOBs();
@@ -172,4 +180,8 @@ public class RulesDelegate implements Rules {
     public boolean generateJavaClient() {
         return rules.generateJavaClient();
     }
+
+	public boolean generateTounaInsert() {
+		return rules.generateTounaInsert();
+	}
 }

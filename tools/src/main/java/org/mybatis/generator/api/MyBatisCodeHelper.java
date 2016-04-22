@@ -8,7 +8,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.mybatis.generator.config.Configuration;
@@ -23,6 +25,8 @@ import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.exception.XMLParserException;
 import org.mybatis.generator.internal.DefaultShellCallback;
+
+import com.touna.util.TounaServiceCodeUtil;
 
 public class MyBatisCodeHelper {
 
@@ -44,6 +48,8 @@ public class MyBatisCodeHelper {
 					.getProperty("xmlbeanTargetProject"));
 			myBatis3CommonConfig.setDaoTargetProject(pro
 					.getProperty("daoTargetProject"));
+			myBatis3CommonConfig.setServiceTargetProject(pro
+					.getProperty("serviceTargetProject"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -51,8 +57,10 @@ public class MyBatisCodeHelper {
 	}
 
 	public static void myBatis3CodeCreate(String tempateFilePath,
-			String codeListpath) throws IOException, XMLParserException,
-			InvalidConfigurationException, SQLException, InterruptedException {
+			String codeListpath, String interfaceTemplateName,
+			String interfaceImplTemplateName) throws IOException,
+			XMLParserException, InvalidConfigurationException, SQLException,
+			InterruptedException {
 		List<String> warnings = new ArrayList<String>();
 		boolean overwrite = true;
 		File configFile = new File(tempateFilePath);
@@ -105,6 +113,9 @@ public class MyBatisCodeHelper {
 					sqlMapConfig.setTargetProject(myBatis3CommonConfig
 							.getXmlTargetProject());
 
+					sqlMapConfig.getProperties().setProperty("genenicClass",
+							params[0] + "." + params[4]);
+
 					JavaClientGeneratorConfiguration javaClientConfig = context
 							.getJavaClientGeneratorConfiguration();
 
@@ -113,6 +124,17 @@ public class MyBatisCodeHelper {
 					javaClientConfig.setTargetProject(myBatis3CommonConfig
 							.getDaoTargetProject());
 
+					javaClientConfig.getProperties()
+							.setProperty("rootInterface",
+									"com.touna.core.mapper.BaseMapper");
+
+					javaClientConfig.getProperties().setProperty(
+							"genenicClass", params[0] + "." + params[4]);
+
+					JavaClientGeneratorConfiguration javaServiceConfig = context
+							.getJavaServiceGeneratorConfiguration();
+					javaServiceConfig.setTargetPackage(params[5]);
+
 					List<TableConfiguration> tables = context
 							.getTableConfigurations();
 
@@ -120,6 +142,22 @@ public class MyBatisCodeHelper {
 						tables.get(i).setTableName(params[3]);
 						tables.get(i).setDomainObjectName(params[4]);
 					}
+
+					Map<String, Object> paramMap = new HashMap<String, Object>();
+
+					paramMap.put("interfaceTemplate", interfaceTemplateName);
+					paramMap.put("interfaceImplTemplate",
+							interfaceImplTemplateName);
+					paramMap.put("interfacePackage", params[5]);
+					paramMap.put("interfaceProject",
+							myBatis3CommonConfig.getServiceTargetProject());
+					
+					paramMap.put("domainObjectName", params[4]);
+					paramMap.put("domainObjectPackage", params[0]);
+					
+					paramMap.put("javaMapperPackage",params[2]);
+
+					TounaServiceCodeUtil.serviceCodeCreate(paramMap);
 
 					DefaultShellCallback callback = new DefaultShellCallback(
 							overwrite);

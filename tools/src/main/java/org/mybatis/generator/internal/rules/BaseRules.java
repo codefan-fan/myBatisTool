@@ -75,6 +75,15 @@ public abstract class BaseRules implements Rules {
         
         return tableConfiguration.isInsertStatementEnabled();
     }
+    
+    
+    public boolean generateTounaInsert(){
+        if (isModelOnly) {
+            return false;
+        }
+        
+        return tableConfiguration.isInsertStatementEnabled();   	
+    }
 
     /**
      * Calculates the class that contains all fields. This class is used as the
@@ -159,6 +168,19 @@ public abstract class BaseRules implements Rules {
 
         return rc;
     }
+    
+    public boolean generateUpdate(){
+        if (isModelOnly) {
+            return false;
+        }
+        
+        boolean rc = tableConfiguration.isUpdateByPrimaryKeyStatementEnabled()
+                && introspectedTable.hasPrimaryKeyColumns()
+                && (introspectedTable.hasBLOBColumns() || introspectedTable
+                        .hasBaseColumns());
+
+        return rc;
+    }
 
     /**
      * Implements the rule for generating the delete by primary key SQL Map
@@ -177,6 +199,15 @@ public abstract class BaseRules implements Rules {
                 && introspectedTable.hasPrimaryKeyColumns();
 
         return rc;
+    }
+    
+    public boolean generateTounaDelete(){
+        if (isModelOnly) {
+            return false;
+        }
+        boolean rc = tableConfiguration.isDeleteByPrimaryKeyStatementEnabled()
+                && introspectedTable.hasPrimaryKeyColumns();
+        return rc;    	
     }
 
     /**

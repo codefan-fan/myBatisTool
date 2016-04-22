@@ -1,0 +1,20 @@
+package ${interfacePackage}; 
+
+import java.util.List;
+
+import com.touna.core.dto.DtoBean;
+import com.touna.core.paginator.Paginator;
+import com.touna.core.paginator.QueryParam;
+import ${javaBeanFullName};
+
+public interface ${javaBeanShortName}Service{
+
+    DtoBean<List<${javaBeanShortName}>> select${javaBeanShortName}ByPagination(QueryParam queryParam, Paginator page);
+    
+    DtoBean<Integer> insert(${javaBeanShortName} ${javaBeanShortNameLowCase});
+    
+    DtoBean<Integer> update(${javaBeanShortName} ${javaBeanShortNameLowCase});
+
+    DtoBean<Integer> delete(${javaBeanShortName} ${javaBeanShortNameLowCase});
+
+}

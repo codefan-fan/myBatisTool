@@ -15,9 +15,11 @@
  */
 package org.mybatis.generator.codegen.mybatis3.xmlmapper;
 
+import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
 import org.mybatis.generator.api.FullyQualifiedTable;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.Document;
 import org.mybatis.generator.api.dom.xml.XmlElement;
@@ -37,12 +39,17 @@ import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.ResultMapWithou
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.SelectByExampleWithBLOBsElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.SelectByExampleWithoutBLOBsElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.SelectByPrimaryKeyElementGenerator;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.TounaDeleteElementGenerator;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.TounaInsertElementGenerator;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.TounaSelectByPaginationElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByExampleSelectiveElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByExampleWithBLOBsElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByExampleWithoutBLOBsElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByPrimaryKeySelectiveElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByPrimaryKeyWithBLOBsElementGenerator;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateByPrimaryKeyWithoutBLOBsElementGenerator;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.UpdateElementGenerator;
+import org.mybatis.generator.config.PropertyRegistry;
 
 /**
  * 
@@ -75,18 +82,35 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         addSelectByExampleWithBLOBsElement(answer);
         addSelectByExampleWithoutBLOBsElement(answer);
         addSelectByPrimaryKeyElement(answer);
-        addDeleteByPrimaryKeyElement(answer);
-        addDeleteByExampleElement(answer);
-        addInsertElement(answer);
-        addInsertSelectiveElement(answer);
         addCountByExampleElement(answer);
         addUpdateByExampleSelectiveElement(answer);
         addUpdateByExampleWithBLOBsElement(answer);
         addUpdateByExampleWithoutBLOBsElement(answer);
-        addUpdateByPrimaryKeySelectiveElement(answer);
-        addUpdateByPrimaryKeyWithBLOBsElement(answer);
-        addUpdateByPrimaryKeyWithoutBLOBsElement(answer);
+        addDeleteByExampleElement(answer);
+        
+		String genenicClass = introspectedTable
+				.getTableConfigurationProperty(PropertyRegistry.ANY_GENENIC_CLASS);
 
+		if (!stringHasValue(genenicClass)) {
+			genenicClass = context.getSqlMapGeneratorConfiguration()
+					.getProperty(PropertyRegistry.ANY_GENENIC_CLASS);
+		}
+
+		if (stringHasValue(genenicClass)) {			
+			addUpdateElement(answer);
+			addTounaInsertElement(answer);
+			addTounaDeleteElement(answer);
+			addTounaSelectElement(answer);
+		}
+		else{
+	        addUpdateByPrimaryKeySelectiveElement(answer);
+	        addUpdateByPrimaryKeyWithBLOBsElement(answer);
+	        addUpdateByPrimaryKeyWithoutBLOBsElement(answer);
+	        addDeleteByPrimaryKeyElement(answer);
+	        addInsertElement(answer);
+	        addInsertSelectiveElement(answer);
+
+		}
         return answer;
     }
 
@@ -171,6 +195,20 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
             initializeAndExecuteGenerator(elementGenerator, parentElement);
         }
     }
+    
+    protected void addTounaDeleteElement(XmlElement parentElement) {
+        if (introspectedTable.getRules().generateTounaDelete()) {
+            AbstractXmlElementGenerator elementGenerator = new TounaDeleteElementGenerator();
+            initializeAndExecuteGenerator(elementGenerator, parentElement);
+        }
+    }
+    
+    protected void addTounaSelectElement(XmlElement parentElement) {
+        if (introspectedTable.getRules().generateSelectByPrimaryKey()) {
+            AbstractXmlElementGenerator elementGenerator = new TounaSelectByPaginationElementGenerator();
+            initializeAndExecuteGenerator(elementGenerator, parentElement);
+        }
+    }
 
     protected void addInsertElement(XmlElement parentElement) {
         if (introspectedTable.getRules().generateInsert()) {
@@ -184,6 +222,13 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
             AbstractXmlElementGenerator elementGenerator = new InsertSelectiveElementGenerator();
             initializeAndExecuteGenerator(elementGenerator, parentElement);
         }
+    }
+    
+    protected void addTounaInsertElement(XmlElement parentElement){
+    	if (introspectedTable.getRules().generateTounaInsert()){
+    		AbstractXmlElementGenerator elementGenerator = new TounaInsertElementGenerator();
+    		initializeAndExecuteGenerator(elementGenerator, parentElement);
+    	}
     }
 
     protected void addCountByExampleElement(XmlElement parentElement) {
@@ -222,6 +267,14 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
             initializeAndExecuteGenerator(elementGenerator, parentElement);
         }
     }
+    
+    protected void addUpdateElement(XmlElement parentElement){
+    	if (introspectedTable.getRules().generateUpdate()){
+    		AbstractXmlElementGenerator elementGenerator=new UpdateElementGenerator();
+    		initializeAndExecuteGenerator(elementGenerator, parentElement);
+    	}
+    }
+    
 
     protected void addUpdateByPrimaryKeyWithBLOBsElement(
             XmlElement parentElement) {

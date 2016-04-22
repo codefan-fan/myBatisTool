@@ -523,7 +523,11 @@ public class MyBatisGeneratorConfigurationParser {
 
     private void parseJavaClientGenerator(Context context, Node node) {
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
-
+ 
+        JavaClientGeneratorConfiguration javaServiceGeneratorConfiguration = new JavaClientGeneratorConfiguration();
+        
+        context.setJavaServiceGeneratorConfiguration(javaServiceGeneratorConfiguration);
+        
         context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
 
         Properties attributes = parseAttributes(node);

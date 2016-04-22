@@ -72,7 +72,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
             return;
         }
 
-        xmlElement.addElement(new TextElement("<!--")); //$NON-NLS-1$
+/*        xmlElement.addElement(new TextElement("<!--")); //$NON-NLS-1$
 
         StringBuilder sb = new StringBuilder();
         sb.append("  WARNING - "); //$NON-NLS-1$
@@ -92,7 +92,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         }
 
         xmlElement.addElement(new TextElement("-->")); //$NON-NLS-1$
-    }
+*/    }
 
     public void addRootComment(XmlElement rootElement) {
         // add no document level comments by default

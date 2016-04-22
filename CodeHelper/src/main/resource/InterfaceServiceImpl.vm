@@ -1,0 +1,53 @@
+package ${interfacePackage}.impl; 
+
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+import javax.annotation.Resource;
+
+import com.touna.core.dto.DtoBean;
+import com.touna.core.paginator.Paginator;
+import com.touna.core.paginator.QueryParam;
+import com.touna.core.service.AbstractBaseService;
+import ${javaBeanFullName};
+import ${javaMapperFullName};
+import ${interfacePackage}.${javaBeanShortName}Service;
+
+@Service
+public class ${javaBeanShortName}ServiceImpl extends AbstractBaseService<${javaBeanShortName}> implements ${javaBeanShortName}Service{
+
+     private static final Log LOGGER = LogFactory.getLog(${javaBeanShortName}ServiceImpl.class);
+
+     @Resource
+     private ${javaBeanShortName}Mapper ${javaBeanShortNameLowCase}Mapper;
+     
+     @Override
+     public DtoBean<List<${javaBeanShortName}>> select${javaBeanShortName}ByPagination(QueryParam queryParam, Paginator page) {
+        DtoBean<List<${javaBeanShortName}>> result = new DtoBean<List<${javaBeanShortName}>>();
+        result.setData(this.selectTableByPagination(${javaBeanShortNameLowCase}Mapper, queryParam, page));
+        return result;
+     }
+
+    @Override
+    public DtoBean<Integer> insert(${javaBeanShortName} ${javaBeanShortNameLowCase}) {
+        DtoBean<Integer> result = new DtoBean<Integer>();
+        result.setData(this.insert(${javaBeanShortNameLowCase}Mapper, ${javaBeanShortNameLowCase}));
+        return result;
+    }     
+
+
+    @Override
+    public DtoBean<Integer> update(${javaBeanShortName} ${javaBeanShortNameLowCase}) {
+        DtoBean<Integer> result = new DtoBean<Integer>();
+        result.setData(this.update(${javaBeanShortNameLowCase}Mapper, ${javaBeanShortNameLowCase}));
+        return result;
+    }    
+    
+    @Override
+    public DtoBean<Integer> delete(${javaBeanShortName} ${javaBeanShortNameLowCase}) {
+        DtoBean<Integer> result = new DtoBean<Integer>();
+        result.setData(this.delete(${javaBeanShortNameLowCase}Mapper, ${javaBeanShortNameLowCase}));
+        return result;
+    }
+}

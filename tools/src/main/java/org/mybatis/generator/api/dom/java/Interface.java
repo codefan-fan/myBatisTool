@@ -39,6 +39,8 @@ public class Interface extends JavaElement implements CompilationUnit {
     private FullyQualifiedJavaType type;
 
     private Set<FullyQualifiedJavaType> superInterfaceTypes;
+     
+    private Set<FullyQualifiedJavaType> genenicTypes;
 
     private List<Method> methods;
 
@@ -51,6 +53,7 @@ public class Interface extends JavaElement implements CompilationUnit {
         super();
         this.type = type;
         superInterfaceTypes = new LinkedHashSet<FullyQualifiedJavaType>();
+        genenicTypes = new LinkedHashSet<FullyQualifiedJavaType>();
         methods = new ArrayList<Method>();
         importedTypes = new TreeSet<FullyQualifiedJavaType>();
         fileCommentLines = new ArrayList<String>();
@@ -140,6 +143,19 @@ public class Interface extends JavaElement implements CompilationUnit {
 
                 sb.append(fqjt.getShortName());
             }
+            if (getGenenicTypes().size()>0){
+            	sb.append("<");
+            	for (FullyQualifiedJavaType fqjt:getGenenicTypes()){
+            		sb.append(fqjt.getShortName());
+            		sb.append(",");
+            	}
+            	
+            	String last=sb.substring(sb.length()-1);
+            	if (last.equals(",")){
+            		sb.deleteCharAt(sb.length()-1);
+            	}
+            	sb.append(">");
+            }
         }
 
         sb.append(" {"); //$NON-NLS-1$
@@ -165,6 +181,15 @@ public class Interface extends JavaElement implements CompilationUnit {
 
     public void addSuperInterface(FullyQualifiedJavaType superInterface) {
         superInterfaceTypes.add(superInterface);
+    }
+    
+    public void addGeneicClass(FullyQualifiedJavaType genenicTypes){
+    	this.genenicTypes.add(genenicTypes);
+    }
+    
+    
+    public Set<FullyQualifiedJavaType> getGenenicTypes(){
+    	return this.genenicTypes;
     }
 
     /**
